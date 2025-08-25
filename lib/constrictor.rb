@@ -1,8 +1,14 @@
-# frozen_string_literal: true
+require "prism"
+require "active_support/core_ext/array/wrap"
 
-require_relative "constrictor/version"
+require "constrictor/version"
 
 module Constrictor
-  class Error < StandardError; end
-  # Your code goes here...
+  autoload :ConstFinder, "constrictor/const_finder"
+  autoload :ConstResolver, "constrictor/const_resolver"
+
+  module_function
+
+  def constants_in_file(file_path:) = ConstFinder.in_file(file_path:)
+  def constants_in_code(code:) = ConstFinder.in_code(code:)
 end

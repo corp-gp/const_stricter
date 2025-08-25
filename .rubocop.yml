@@ -1,4 +1,8 @@
-AllCops:
+inherit_gem:
+  rubocop-gp:
+    - ./config/default.yml
+
+- AllCops:
   TargetRubyVersion: 3.1
 
 Style/StringLiterals:
@@ -6,3 +10,6 @@ Style/StringLiterals:
 
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never

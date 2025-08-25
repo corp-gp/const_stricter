@@ -5,7 +5,8 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in constrictor.gemspec
 gemspec
 
-gem "rake", "~> 13.0"
+gem "priscilla", github: "corp-gp/priscilla"
+gem "rake"
 gem "rspec", "~> 3.0"
 
 gem "rubocop-gp", github: "corp-gp/rubocop-gp"

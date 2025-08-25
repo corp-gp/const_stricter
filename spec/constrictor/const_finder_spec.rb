@@ -1,0 +1,12 @@
+RSpec.describe Constrictor::ConstFinder do
+  describe "#find_constants_in_file" do
+    it "parse file and find constants" do
+      result = described_class.in_file(file_path: "spec/fixtures/product.rb")
+
+      expect(result).to eq [
+        { const_name: "Array", namespace: "Product" },
+        { const_name: "CATEGORY_ID", namespace: "Product"},
+      ]
+    end
+  end
+end
