@@ -1,8 +1,11 @@
 # Constrictor
 
-There are two approaches to finding unused code. In the first approach, calls to all classes/modules are logged in runtime, thus collecting usage statistics. This allows you to collect the most reliable dependency map. However, this approach has drawbacks: additional workload due to runtime tracking and the inability to find calls to non-existent constants before code is deployed to production. 
+The `Constrictor` is a Ruby library designed to identify unused code by analyzing constant dependencies in your project. There are two approaches to achieve this:
 
-The second approach involves parsing the ruby-files of the project. In this case, the quality of dependency search is reduced (when using dynamic generation of constant names). But at the same time, it becomes possible to fix errors in the code even before the application is deployed. The `Constrictor` implements constant checking by parsing the project code using [prism](https://github.com/ruby/prism)
+- *Runtime Tracking*: This method logs calls to classes and modules during runtime. While this approach provides reliable dependency map, it introduces runtime overhead and cannot detect references to undefined constants until the code is deployed to production.
+- *Static Code Parsing*: This approach parses source files to identify constant usage. Although less precise in cases involving dynamically generated constant names, it allows you to detect errors and unused code before deployment, improving code quality early in the development cycle.
+
+Constrictor leverages static analysis by [prism](https://github.com/ruby/prism) to help developers maintain cleaner codebases by identifying and removing unused constants efficiently.
 
 ## Installation
 
