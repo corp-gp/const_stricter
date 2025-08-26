@@ -3,6 +3,7 @@ require "active_support/core_ext/array/wrap"
 require "active_support/core_ext/object/blank"
 
 require "constrictor/version"
+require "constrictor/railtie" if defined?(Rails::Railtie)
 
 module Constrictor
   autoload :ConstFinder, "constrictor/const_finder"
