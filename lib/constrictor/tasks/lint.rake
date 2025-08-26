@@ -35,7 +35,7 @@ namespace :constrictor do
         puts "#{parsed_const_hsh[:namespace]} { #{parsed_const_hsh[:const_name]} }"
       end
       
-      puts "Missed constants"
+      puts "\nMissed constants"
       missed_constants.each do |parsed_const_hsh|
         puts "#{parsed_const_hsh[:namespace]} { #{parsed_const_hsh[:const_name]} }"
       end
