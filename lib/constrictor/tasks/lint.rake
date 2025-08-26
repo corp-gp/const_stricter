@@ -4,8 +4,6 @@ namespace :constrictor do
     dynamic_constants = Set.new
     prev_found_const_count = 0
 
-    const_resolver = Constrictor::ConstResolver.new
-
     loop do
       constants =
         Dir.glob("{app,lib}/**/*.rb").flat_map do |file_path|
@@ -17,7 +15,7 @@ namespace :constrictor do
       constants.each do |parsed_const_hsh|
         if parsed_const_hsh[:dynamic]
           dynamic_constants << parsed_const_hsh
-        elsif (constant = const_resolver.evaluate(**parsed_const_hsh))
+        elsif (constant = Constrictor.evaluate(**parsed_const_hsh))
           found_const_names << constant.full_name if constant.respond_to?(:full_name)
         else
           missed_constants << parsed_const_hsh

@@ -12,4 +12,6 @@ module Constrictor
 
   def constants_in_file(file_path:) = ConstFinder.in_file(file_path:)
   def constants_in_code(code:) = ConstFinder.in_code(code:)
+
+  def evaluate(...) = ConstResolver.evaluate(...)
 end

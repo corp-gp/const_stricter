@@ -1,7 +1,15 @@
+require "singleton"
+
 module Constrictor
   class ConstResolver
+    include Singleton
+
     def initialize
       @evaluated = {}
+    end
+
+    def self.evaluate(namespace:, const_name:, dynamic: false)
+      instance.evaluate(namespace:, const_name:, dynamic:)
     end
 
     def evaluate(namespace:, const_name:, dynamic: false)
