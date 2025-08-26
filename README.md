@@ -1,6 +1,8 @@
 # Constrictor
 
-There are two approaches to finding unused code. In the first approach, calls to all classes/modules are logged in runtime, thus collecting usage statistics. This allows you to collect the most reliable dependency map. However, this approach has drawbacks: additional workload due to runtime tracking and the inability to find calls to non-existent constants before code is deployed to production. The second approach involves parsing the ruby-files of the project. In this case, the quality of dependency search is reduced (when using dynamic generation of constant names). But at the same time, it becomes possible to fix errors in the code even before the application is deployed. The `Constrictor` implements constant checking by parsing the project code using [prism](https://github.com/ruby/prism)
+There are two approaches to finding unused code. In the first approach, calls to all classes/modules are logged in runtime, thus collecting usage statistics. This allows you to collect the most reliable dependency map. However, this approach has drawbacks: additional workload due to runtime tracking and the inability to find calls to non-existent constants before code is deployed to production. 
+
+The second approach involves parsing the ruby-files of the project. In this case, the quality of dependency search is reduced (when using dynamic generation of constant names). But at the same time, it becomes possible to fix errors in the code even before the application is deployed. The `Constrictor` implements constant checking by parsing the project code using [prism](https://github.com/ruby/prism)
 
 ## Installation
 
@@ -32,7 +34,7 @@ StaticPages::Forms::Component { FormComponent }
 ProductShape { Product::USER_AVAILABILITY::PREORDER }
 ```
 
-The section with dynamic constants shows strings that can only be calculated in runtime.
+The section with `Dynamic constants` shows strings that can only be calculated in runtime.
 
 The pseudo-code in `Missed constants` means that the constant `FormComponent` is missing (can't be evaluated) in context of `StaticPages::Forms::Component`.
 
