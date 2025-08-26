@@ -2,7 +2,7 @@ inherit_gem:
   rubocop-gp:
     - ./config/default.yml
 
-- AllCops:
+AllCops:
   TargetRubyVersion: 3.1
 
 Style/StringLiterals:
@@ -13,3 +13,19 @@ Style/StringLiteralsInInterpolation:
 
 Style/FrozenStringLiteralComment:
   EnforcedStyle: never
+
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - spec/const_stricter/const_stricter_evaluate_spec.rb
+
+RSpec/LeakyConstantDeclaration:
+  Exclude:
+    - spec/const_stricter/const_stricter_evaluate_spec.rb
+
+Gp/SpecConstantAssignment:
+  Exclude:
+    - spec/const_stricter/const_stricter_evaluate_spec.rb
+
+RSpec/DescribedClass:
+  Exclude:
+    - spec/const_stricter/const_stricter_evaluate_spec.rb

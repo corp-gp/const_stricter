@@ -42,7 +42,7 @@ module ConstStricter
           # slice возвращает код ноды, включая все дочерние
           # в родительскую цепочку добавляется только самый верхний уровень
           # connection.module::Jobs::ImportProductsJob
-          @current_const.add_parent ConstNamePart.new(node.slice).tap { |name_part| name_part.dynamic = true }
+          @current_const.add_parent(ConstNamePart.new(node.slice).tap { |name_part| name_part.dynamic = true })
         end
         if node.compact_child_nodes.empty?
           # Values()::USER_ID

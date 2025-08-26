@@ -1,5 +1,5 @@
 namespace :const_stricter do
-  desc 'Lint constants in project const_stricter:lint[{app,lib}/**/*.rb]'
+  desc "Lint constants in project const_stricter:lint[{app,lib}/**/*.rb]"
   task :lint, [:glob] => :environment do |_t, args|
     glob = args[:glob] || "{app,lib}/**/*.rb"
 
@@ -34,7 +34,7 @@ namespace :const_stricter do
       dynamic_constants.each do |parsed_const_hsh|
         puts "#{parsed_const_hsh[:namespace]} { #{parsed_const_hsh[:const_name]} }"
       end
-      
+
       puts "\nMissed constants"
       missed_constants.each do |parsed_const_hsh|
         puts "#{parsed_const_hsh[:namespace]} { #{parsed_const_hsh[:const_name]} }"

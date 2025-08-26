@@ -1,6 +1,6 @@
 RSpec.describe ConstStricter do
   it "find dynamic const name" do
-    result = ConstStricter.constants_in_code(code: <<~RUBY)
+    result = described_class.constants_in_code(code: <<~RUBY)
       class Product
         def price = user_rate_module::PRICE_COEF * base_price
         def price = const_get(user_rate_module_name)::PRICE_COEF * base_price
@@ -18,7 +18,7 @@ RSpec.describe ConstStricter do
   end
 
   it "can't find extrapolated const name" do
-    result = ConstStricter.constants_in_code(code: <<~RUBY)
+    result = described_class.constants_in_code(code: <<~RUBY)
       class Product
         def price = "PRICE_COEF".constantize * base_price
       end

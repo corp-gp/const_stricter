@@ -19,7 +19,7 @@ module ConstStricter
 
       constant =
         const_lookup_in_context(namespace, const_name, resolved_paths, inherit: false) ||
-          const_lookup_in_context(namespace, const_name, resolved_paths, inherit: true)
+        const_lookup_in_context(namespace, const_name, resolved_paths, inherit: true)
 
       resolved_paths.each do |parsed_const_hsh|
         @evaluated[**parsed_const_hsh] = constant
@@ -44,6 +44,7 @@ module ConstStricter
       if missed_const_name != const_name && !const_name.start_with?(missed_const_name) && !missed_const_name.delete_prefix(current_namespace) == const_name
         raise
       end
+
       if current_namespace
         const_lookup_in_context(current_namespace.split("::")[0..-2].join("::").presence, const_name, resolved_paths, inherit:)
       end

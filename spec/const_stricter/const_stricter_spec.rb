@@ -1,6 +1,6 @@
 RSpec.describe ConstStricter do
   it "preserves namespace" do
-    result = ConstStricter.constants_in_code(code: <<~RUBY)
+    result = described_class.constants_in_code(code: <<~RUBY)
       module Catalog
         class Product
           include Versioning
@@ -17,7 +17,7 @@ RSpec.describe ConstStricter do
   end
 
   it "find constant in global context" do
-    result = ConstStricter.constants_in_code(code: <<~RUBY)
+    result = described_class.constants_in_code(code: <<~RUBY)
       class Product
         include ::Versioning
 

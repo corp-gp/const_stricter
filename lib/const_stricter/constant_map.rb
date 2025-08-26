@@ -1,6 +1,6 @@
 module ConstStricter
   class ConstantMap < Hash
-    def push(namespace: [], const_name:)
+    def push(const_name:, namespace: [])
       if namespace.empty?
         self[const_name] = ConstantMap.new
       else

@@ -45,6 +45,6 @@ RSpec.describe ConstStricter do
 
     result = m.instance_eval { ConstStricter.evaluate(namespace: "Item", const_name: "GROUP_ID") }
 
-    expect(result).to eq nil
+    expect(result).to be_nil
   end
 end
