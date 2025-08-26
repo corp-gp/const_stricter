@@ -22,7 +22,7 @@ module ConstStricter
         const_lookup_in_context(namespace, const_name, resolved_paths, inherit: true)
 
       resolved_paths.each do |parsed_const_hsh|
-        @evaluated[namespace: parsed_const_hsh[:namespace], const_name: parsed_const_hsh[:const_name]] = constant
+        @evaluated[parsed_const_hsh] = constant
       end
 
       constant
