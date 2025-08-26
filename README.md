@@ -1,29 +1,29 @@
-# Constrictor
+# const_stricter
 
-The `Constrictor` is a Ruby library designed to identify unused code by analyzing constant dependencies in your project. There are two approaches to achieve this:
+The `const_stricter` is a Ruby library designed to identify unused code by analyzing constant dependencies in your project. There are two approaches to achieve this:
 
 - *Runtime Tracking*: This method logs calls to classes and modules during runtime. While this approach provides reliable dependency map, it introduces runtime overhead and cannot detect references to undefined constants until the code is deployed to production.
 - *Static Code Parsing*: This approach parses source files to identify constant usage. Although less precise in cases involving dynamically generated constant names, it allows you to detect errors and unused code before deployment, improving code quality early in the development cycle.
 
-Constrictor leverages static analysis by [prism](https://github.com/ruby/prism) to help developers maintain cleaner codebases by identifying and removing unused constants efficiently.
+`const_stricter` leverages static analysis by [prism](https://github.com/ruby/prism) to help developers maintain cleaner codebases by identifying and removing unused constants efficiently.
 
 ## Installation
 
 Install the gem and add to the application's Gemfile by executing:
 ```bash
-bundle add constrictor --group "development"
+bundle add const_stricter --group "development"
 ```
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 ```bash
-gem install constrictor
+gem install const_stricter
 ```
 
 ## Usage
 
 Run rake task from the root folder of your application:
 ```bash
-rake constrictor:lint
+rake const_stricter:lint
 ```
 
 As a result, you'll see something like following:
@@ -43,12 +43,12 @@ The pseudo-code in `Missed constants` means that the constant `FormComponent` is
 
 You can specify which files need to be checked by setting the `glob` parameter in the rake task (`{app,lib}/**/*.rb` by default):
 ```bash
-rake constrictor:lint[lib/*.rb]
+rake const_stricter:lint[lib/*.rb]
 ```
 
 ## Limitations
 
-The `Constrictor` can't find constants whose names are set using meta-programming. Examples [in tests](spec/constrictor/dynamic_spec.rb)
+The `const_stricter` can't find constants whose names are set using meta-programming. Examples [in tests](spec/const_stricter/dynamic_spec.rb)
 
 ## Development
 
@@ -58,7 +58,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/constrictor. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/constrictor/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/corp-gp/const_stricter. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/corp-gp/const_stricter/blob/master/CODE_OF_CONDUCT.md).
 
 ## License
 
@@ -66,4 +66,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Constrictor project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/constrictor/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the `const_stricter` project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/corp-gp/const_stricter/blob/master/CODE_OF_CONDUCT.md).

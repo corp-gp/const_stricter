@@ -1,4 +1,4 @@
-module Constrictor
+module ConstStricter
   class ConstantMap < Hash
     def push(namespace: [], const_name:)
       if namespace.empty?

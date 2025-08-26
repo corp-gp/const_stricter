@@ -1,6 +1,6 @@
 require "singleton"
 
-module Constrictor
+module ConstStricter
   class ConstResolver
     include Singleton
 

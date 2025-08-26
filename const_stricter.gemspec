@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
-require_relative "lib/constrictor/version"
+require_relative "lib/const_stricter/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "constrictor"
-  spec.version = Constrictor::VERSION
+  spec.name = "const_stricter"
+  spec.version = ConstStricter::VERSION
   spec.authors = ["Sergei Malykh"]
   spec.email = ["xronos.i.am@gmail.com"]
 
   spec.summary = "Check project's files for nonexistent constants"
-  spec.homepage = "https://github.com/corp-gp/constrictor"
+  spec.homepage = "https://github.com/corp-gp/const_stricter"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.1.0"
 
   spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/corp-gp/constrictor"
-  spec.metadata["changelog_uri"] = "https://github.com/corp-gp/constrictor/CHANGELOG.md"
+  spec.metadata["source_code_uri"] = spec.homepage
+  spec.metadata["changelog_uri"] = "https://github.com/corp-gp/const_stricter/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.

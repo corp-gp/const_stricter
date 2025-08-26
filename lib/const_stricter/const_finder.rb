@@ -1,6 +1,6 @@
-require "constrictor/scoped_const_parser"
+require "const_stricter/scoped_const_parser"
 
-module Constrictor
+module ConstStricter
   class ConstFinder
     def initialize(prism_code)
       @parser = ScopedConstParser.new

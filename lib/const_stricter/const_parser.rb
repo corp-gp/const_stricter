@@ -1,10 +1,10 @@
 require "active_support/core_ext/module/redefine_method"
 
-require "constrictor/const_name"
-require "constrictor/const_name_part"
-require "constrictor/constant_map"
+require "const_stricter/const_name"
+require "const_stricter/const_name_part"
+require "const_stricter/constant_map"
 
-module Constrictor
+module ConstStricter
   class ConstParser < Prism::Visitor
     attr_reader :const_map
 

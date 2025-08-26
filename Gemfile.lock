@@ -22,7 +22,7 @@ GIT
 PATH
   remote: .
   specs:
-    constrictor (0.1.0)
+    const_stricter (1.0.0)
       activesupport
       prism
 
@@ -133,7 +133,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  constrictor!
+  const_stricter!
   priscilla!
   rake
   rspec (~> 3.0)

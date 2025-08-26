@@ -1,4 +1,4 @@
-module Constrictor
+module ConstStricter
   class ConstName
     attr_reader :dynamic, :name_parts
     private :name_parts

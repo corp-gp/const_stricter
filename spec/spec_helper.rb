@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "constrictor"
+require "const_stricter"
 require "priscilla"
 
 RSpec.configure do |config|

@@ -1,4 +1,4 @@
-module Constrictor
+module ConstStricter
   class ConstNamePart < String
     attr_accessor :dynamic
   end

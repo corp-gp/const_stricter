@@ -2,12 +2,12 @@ require "prism"
 require "active_support/core_ext/array/wrap"
 require "active_support/core_ext/object/blank"
 
-require "constrictor/version"
-require "constrictor/railtie" if defined?(Rails::Railtie)
+require "const_stricter/version"
+require "const_stricter/railtie" if defined?(Rails::Railtie)
 
-module Constrictor
-  autoload :ConstFinder, "constrictor/const_finder"
-  autoload :ConstResolver, "constrictor/const_resolver"
+module ConstStricter
+  autoload :ConstFinder, "const_stricter/const_finder"
+  autoload :ConstResolver, "const_stricter/const_resolver"
 
   module_function
 

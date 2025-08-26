@@ -1,6 +1,6 @@
-RSpec.describe Constrictor do
+RSpec.describe ConstStricter do
   after(:each) do
-    Constrictor::ConstResolver.instance.instance_variable_set(:@evaluated, {})
+    ConstStricter::ConstResolver.instance.instance_variable_set(:@evaluated, {})
   end
 
   it "resolve constant by name" do
@@ -13,7 +13,7 @@ RSpec.describe Constrictor do
         end
       end
 
-    result = m.instance_eval { Constrictor.evaluate(namespace: "Item", const_name: "CATEGORY_ID") }
+    result = m.instance_eval { ConstStricter.evaluate(namespace: "Item", const_name: "CATEGORY_ID") }
 
     expect(result).to eq 1
   end
@@ -30,7 +30,7 @@ RSpec.describe Constrictor do
         end
       end
 
-    result = m.instance_eval { Constrictor.evaluate(namespace: "Catalog::Item", const_name: "CATEGORY_ID") }
+    result = m.instance_eval { ConstStricter.evaluate(namespace: "Catalog::Item", const_name: "CATEGORY_ID") }
 
     expect(result).to eq 2
   end
@@ -43,7 +43,7 @@ RSpec.describe Constrictor do
         end
       end
 
-    result = m.instance_eval { Constrictor.evaluate(namespace: "Item", const_name: "GROUP_ID") }
+    result = m.instance_eval { ConstStricter.evaluate(namespace: "Item", const_name: "GROUP_ID") }
 
     expect(result).to eq nil
   end

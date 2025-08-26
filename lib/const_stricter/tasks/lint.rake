@@ -1,5 +1,5 @@
-namespace :constrictor do
-  desc 'Lint constants in project constrictor:lint[{app,lib}/**/*.rb]'
+namespace :const_stricter do
+  desc 'Lint constants in project const_stricter:lint[{app,lib}/**/*.rb]'
   task :lint, [:glob] => :environment do |_t, args|
     glob = args[:glob] || "{app,lib}/**/*.rb"
 
@@ -10,7 +10,7 @@ namespace :constrictor do
     loop do
       constants =
         Dir.glob(glob).flat_map do |file_path|
-          Constrictor.constants_in_file(file_path:)
+          ConstStricter.constants_in_file(file_path:)
         end
       break if constants.empty?
 
@@ -18,7 +18,7 @@ namespace :constrictor do
       constants.each do |parsed_const_hsh|
         if parsed_const_hsh[:dynamic]
           dynamic_constants << parsed_const_hsh
-        elsif (constant = Constrictor.evaluate(**parsed_const_hsh))
+        elsif (constant = ConstStricter.evaluate(**parsed_const_hsh))
           found_const_names << constant.full_name if constant.respond_to?(:full_name)
         else
           missed_constants << parsed_const_hsh

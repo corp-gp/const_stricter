@@ -1,6 +1,6 @@
-require "constrictor/const_parser"
+require "const_stricter/const_parser"
 
-module Constrictor
+module ConstStricter
   class ScopedConstParser < ConstParser
     def visit_module_node(node)
       visit_scoped_node(node)

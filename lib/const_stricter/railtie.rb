@@ -1,4 +1,4 @@
-module Constrictor
+module ConstStricter
   class Railtie < Rails::Railtie
 
     rake_tasks do
