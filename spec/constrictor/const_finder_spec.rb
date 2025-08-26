@@ -4,7 +4,9 @@ RSpec.describe Constrictor::ConstFinder do
       result = described_class.in_file(file_path: "spec/fixtures/product.rb")
 
       expect(result).to eq [
-        { const_name: "Array", namespace: "Product" },
+        { const_name: "Product", namespace: nil },
+        { const_name: "ApplicationRecord", namespace: "Product" },
+        { const_name: "Versioning", namespace: "Product"},
         { const_name: "CATEGORY_ID", namespace: "Product"},
       ]
     end

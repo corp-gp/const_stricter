@@ -1,5 +1,6 @@
 require "prism"
 require "active_support/core_ext/array/wrap"
+require "active_support/core_ext/object/blank"
 
 require "constrictor/version"
 

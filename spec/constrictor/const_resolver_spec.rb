@@ -6,6 +6,6 @@ RSpec.describe Constrictor::ConstResolver do
   end
 
   it "unable to resolve constant" do
-    
+
   end
 end

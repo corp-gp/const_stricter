@@ -24,6 +24,6 @@ RSpec.describe Constrictor do
       end
     RUBY
 
-    expect(result).to be_empty
+    expect(result).to eq([{ const_name: "Product", namespace: nil }])
   end
 end

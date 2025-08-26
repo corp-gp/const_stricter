@@ -1,7 +1,7 @@
 namespace :constrictor do
   task lint: :environment do
     missed_constants = Set.new
-    dinamic_constants = Set.new
+    dynamic_constants = Set.new
     prev_found_const_count = 0
 
     const_resolver = Constrictor::ConstResolver.new
@@ -16,7 +16,7 @@ namespace :constrictor do
       found_const_names = Set.new
       constants.each do |parsed_const_hsh|
         if parsed_const_hsh[:dynamic]
-          dinamic_constants << parsed_const_hsh
+          dynamic_constants << parsed_const_hsh
         elsif (constant = const_resolver.evaluate(**parsed_const_hsh))
           found_const_names << constant.full_name if constant.respond_to?(:full_name)
         else
@@ -30,7 +30,7 @@ namespace :constrictor do
 
     unless missed_constants.empty?
       pr "Dynamic constants"
-      dinamic_constants.each do |parsed_const_hsh|
+      dynamic_constants.each do |parsed_const_hsh|
         puts "#{parsed_const_hsh[:namespace]} { #{parsed_const_hsh[:const_name]} }"
       end
       

@@ -25,6 +25,12 @@ module Constrictor
     private def find_const_recursive(const_map, parent_namespace: [])
       constants = []
       const_map.each do |namespace, child_const_map|
+        parsed_const_hsh = {
+          namespace:  parent_namespace.map(&:full_name).join("::").presence,
+          const_name: namespace.full_name,
+        }
+        parsed_const_hsh[:dynamic] = true if namespace.dynamic
+        constants << parsed_const_hsh
         full_namespace = parent_namespace + Array.wrap(namespace)
         child_const_map.each_key do |const_name|
           parsed_const_hsh = {
