@@ -2,10 +2,10 @@
 
 The `const_stricter` is a Ruby library designed to identify unused code by analyzing constant dependencies in your project. There are two approaches to achieve this:
 
-- *Runtime Tracking*: This method logs calls to classes and modules during runtime. While this approach provides reliable dependency map, it introduces runtime overhead and cannot detect references to undefined constants until the code is deployed to production.
-- *Static Code Parsing*: This approach parses source files to identify constant usage. Although less precise in cases involving dynamically generated constant names, it allows you to detect errors and unused code before deployment, improving code quality early in the development cycle.
+- **Runtime Tracking**: This method logs calls to classes and modules during runtime. While this approach provides reliable dependency map, it introduces runtime overhead and cannot detect references to undefined constants until the code is deployed to production.
+- **Static Code Parsing**: This approach parses source files to identify constant usage. Although less precise in cases involving dynamically generated constant names, it allows you to detect errors and unused code before deployment, improving code quality early in the development cycle.
 
-`const_stricter` leverages static analysis by [prism](https://github.com/ruby/prism) to help developers maintain cleaner codebases by identifying and removing unused constants efficiently.
+Gem `const_stricter` uses **Static Code Parsing** via [prism](https://github.com/ruby/prism) to help developers maintain cleaner codebases by identifying and removing unused constants efficiently.
 
 ## Installation
 
@@ -27,12 +27,12 @@ rake const_stricter:lint
 ```
 
 As a result, you'll see something like following:
-```
-Dynamic constants                                                            
+```ruby
+# Dynamic constants                                                            
 LegalEntities::SupplierSubmit::Form { Values()::USER_ID }
 Markets::Products::Controller { connection.module::Services::UpdatePrices }
 
-Missed constants                                                             
+# Missed constants                                                             
 StaticPages::Forms::Component { FormComponent }
 ProductShape { Product::USER_AVAILABILITY::PREORDER }
 ```
