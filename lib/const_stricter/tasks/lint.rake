@@ -41,7 +41,7 @@ LOCATION_SEPARATOR = "\n  ↳ "
 
 def pretty_print(parsed_const, locations:, number:)
   puts <<~TEXT
-    #{number}. #{parsed_const.namespace} { #{ColorizedString[parsed_const.const_name].colorize(:light_magenta)} }
+    #{number}. #{ColorizedString[parsed_const.const_name].colorize(:light_magenta)} in #{parsed_const.namespace}
       ↳ #{locations.join(LOCATION_SEPARATOR)}
   TEXT
 end
