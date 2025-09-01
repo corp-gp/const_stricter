@@ -22,7 +22,7 @@ GIT
 PATH
   remote: .
   specs:
-    const_stricter (1.0.0)
+    const_stricter (1.1.0)
       activesupport
       colorize
       prism
