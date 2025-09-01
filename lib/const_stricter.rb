@@ -12,7 +12,7 @@ module ConstStricter
   module_function
 
   def constants_in_file(file_path:) = ConstFinder.in_file(file_path:)
-  def constants_in_code(code:) = ConstFinder.in_code(code:)
+  def constants_in_code(code:)      = ConstFinder.in_code(code:)
 
-  def evaluate(...) = ConstResolver.evaluate(...)
+  def constant_missed?(namespace:, const_name:) = ConstResolver.missed?(namespace:, const_name:)
 end

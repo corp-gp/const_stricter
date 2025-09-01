@@ -3,7 +3,7 @@ RSpec.describe ConstStricter do
     ConstStricter::ConstResolver.instance.instance_variable_set(:@evaluated, {})
   end
 
-  it "resolve constant by name" do
+  it "resolves constant by name" do
     m =
       Module.new do
         class Item
@@ -13,12 +13,12 @@ RSpec.describe ConstStricter do
         end
       end
 
-    result = m.instance_eval { ConstStricter.evaluate(namespace: "Item", const_name: "CATEGORY_ID") }
+    result = m.instance_eval { ConstStricter::ConstResolver.evaluate(namespace: "Item", const_name: "CATEGORY_ID") }
 
     expect(result).to eq 1
   end
 
-  it "resolve constant in parent context" do
+  it "resolves constant in parent context" do
     m =
       Module.new do
         module Catalog
@@ -30,7 +30,7 @@ RSpec.describe ConstStricter do
         end
       end
 
-    result = m.instance_eval { ConstStricter.evaluate(namespace: "Catalog::Item", const_name: "CATEGORY_ID") }
+    result = m.instance_eval { ConstStricter::ConstResolver.evaluate(namespace: "Catalog::Item", const_name: "CATEGORY_ID") }
 
     expect(result).to eq 2
   end
@@ -43,7 +43,7 @@ RSpec.describe ConstStricter do
         end
       end
 
-    result = m.instance_eval { ConstStricter.evaluate(namespace: "Item", const_name: "GROUP_ID") }
+    result = m.instance_eval { ConstStricter::ConstResolver.evaluate(namespace: "Item", const_name: "GROUP_ID") }
 
     expect(result).to be_nil
   end

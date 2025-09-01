@@ -8,24 +8,26 @@ module ConstStricter
       @evaluated = {}
     end
 
-    def self.evaluate(namespace:, const_name:, dynamic: false)
-      instance.evaluate(namespace:, const_name:, dynamic:)
+    def self.missed?(namespace:, const_name:)
+      !evaluate(namespace:, const_name:).nil?
     end
 
-    def evaluate(namespace:, const_name:, dynamic: false)
-      return if dynamic
+    def self.evaluate(namespace:, const_name:)
+      instance.evaluate(namespace:, const_name:)
+    end
 
+    def evaluate(namespace:, const_name:)
       resolved_paths = []
 
-      constant =
+      evaluated_constant =
         const_lookup_in_context(namespace, const_name, resolved_paths, inherit: false) ||
         const_lookup_in_context(namespace, const_name, resolved_paths, inherit: true)
 
       resolved_paths.each do |parsed_const_hsh|
-        @evaluated[parsed_const_hsh] = constant
+        @evaluated[parsed_const_hsh] = evaluated_constant
       end
 
-      constant
+      evaluated_constant
     end
 
     private def const_lookup_in_context(current_namespace, const_name, resolved_paths, inherit:)
