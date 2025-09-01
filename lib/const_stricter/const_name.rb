@@ -3,7 +3,7 @@ module ConstStricter
     attr_reader :dynamic, :name_parts
     private :name_parts
 
-    def initialize(name_parts = [])
+    def initialize(name_parts = []) # rubocop:disable Gp/OptArgParameters
       @name_parts = name_parts
       @dynamic = false
     end
