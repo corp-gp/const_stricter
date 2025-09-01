@@ -2,7 +2,7 @@ require "active_support/core_ext/module/redefine_method"
 
 require "const_stricter/const_name"
 require "const_stricter/const_name_part"
-require "const_stricter/constant_map"
+require "const_stricter/const_map"
 
 module ConstStricter
   class ConstParser < Prism::Visitor
@@ -15,7 +15,7 @@ module ConstStricter
     def initialize
       @namespace = []
       @current_const = ConstName.new
-      @const_map = ConstantMap.new
+      @const_map = ConstMap.new
     end
 
     def visit_constant_path_node(node)
@@ -23,7 +23,7 @@ module ConstStricter
         # include ::ComponentViewPath не вызывает visit_constant_read_node
         visit_constant_read_node(node, force_global_namespace: true)
       else
-        @current_const.add_parent ConstNamePart.new(node.name.to_s)
+        @current_const.add_parent(ConstNamePart.new(node.name.to_s).tap { |name_part| name_part.line_no = node.location.start_line })
         visit_child_nodes(node)
       end
     end
@@ -31,7 +31,7 @@ module ConstStricter
     EMPTY_ARRAY = [].freeze
 
     def visit_constant_read_node(node, force_global_namespace: false)
-      @current_const.add_parent ConstNamePart.new(node.name.to_s)
+      @current_const.add_parent(ConstNamePart.new(node.name.to_s).tap { |name_part| name_part.line_no = node.location.start_line })
       @const_map.push(namespace: force_global_namespace ? EMPTY_ARRAY : @namespace, const_name: @current_const)
       @current_const = ConstName.new
     end
@@ -42,7 +42,12 @@ module ConstStricter
           # slice возвращает код ноды, включая все дочерние
           # в родительскую цепочку добавляется только самый верхний уровень
           # connection.module::Jobs::ImportProductsJob
-          @current_const.add_parent(ConstNamePart.new(node.slice).tap { |name_part| name_part.dynamic = true })
+          @current_const.add_parent(
+            ConstNamePart.new(node.slice).tap do |name_part|
+              name_part.line_no = node.location.start_line
+              name_part.dynamic = true
+            end,
+          )
         end
         if node.compact_child_nodes.empty?
           # Values()::USER_ID

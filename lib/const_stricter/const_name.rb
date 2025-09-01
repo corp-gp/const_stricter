@@ -8,6 +8,12 @@ module ConstStricter
       @dynamic = false
     end
 
+    def inspect = "#{full_name} :#{line_no}"
+
+    def line_no
+      @line_no ||= name_parts[0].line_no
+    end
+
     def parent = name_parts[0]
 
     def add_parent(name_part)

@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.summary = "Check project's files for nonexistent constants"
   spec.homepage = "https://github.com/corp-gp/const_stricter"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.2.0"
+  spec.required_ruby_version = ">= 3.1.0"
 
   spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "activesupport"
+  spec.add_dependency "colorize"
   spec.add_dependency "prism"
 
   spec.metadata["rubygems_mfa_required"] = "true"

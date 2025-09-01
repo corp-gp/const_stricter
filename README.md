@@ -26,20 +26,12 @@ Run rake task from the root folder of your application:
 rake const_stricter:lint
 ```
 
-As a result, you'll see something like following:
-```ruby
-# Dynamic constants                                                            
-LegalEntities::SupplierSubmit::Form { Values()::USER_ID }
-Markets::Products::Controller { connection.module::Services::UpdatePrices }
+As a result, you'll see something like following (run `bin/lint_dummy` from gem root):
+![lint_dummy.jpg](docs/lint_dummy.jpg?raw=true "bin/lint_dummy")
 
-# Missed constants                                                             
-StaticPages::Forms::Component { FormComponent }
-ProductShape { Product::USER_AVAILABILITY::PREORDER }
-```
+The section `Dynamic constants` shows strings that can only be calculated in runtime.
 
-The section with `Dynamic constants` shows strings that can only be calculated in runtime.
-
-The pseudo-code in `Missed constants` means that the constant `FormComponent` is missing (can't be evaluated) in context of `StaticPages::Forms::Component`.
+The pseudo-code in `Missed constants` means that the constant `HTTP` is missing (can't be evaluated) in context of `Traceable`.
 
 You can specify which files need to be checked by setting the `glob` parameter in the rake task (`{app,lib}/**/*.rb` by default):
 ```bash

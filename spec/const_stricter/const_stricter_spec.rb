@@ -1,33 +1,55 @@
 RSpec.describe ConstStricter do
   it "preserves namespace" do
-    result = described_class.constants_in_code(code: <<~RUBY)
-      module Catalog
-        class Product
-          include Versioning
+    constants =
+      described_class.constants_in_code(code: <<~RUBY)
+        module Catalog
+          class Product
+            include Versioning
 
-          def category_id = CATEGORY_ID
+            def category_id = CATEGORY_ID
+          end
         end
-      end
-    RUBY
+      RUBY
 
-    expect(result).to include(
-      { const_name: "CATEGORY_ID", namespace: "Catalog::Product" },
-      { const_name: "Versioning", namespace: "Catalog::Product" },
+    expect(constants.map(&:inspect)).to include(
+      "Catalog::Product { Versioning } → main:3",
+      "Catalog::Product { CATEGORY_ID } → main:5",
     )
   end
 
-  it "find constant in global context" do
-    result = described_class.constants_in_code(code: <<~RUBY)
-      class Product
-        include ::Versioning
+  it "finds class name" do
+    constant = described_class.constants_in_code(code: "class Product; end").first
 
-        def category_id = ::CATEGORY_ID
-      end
-    RUBY
+    expect(constant.inspect).to eq("Object { Product } → main:1")
+  end
 
-    expect(result).to include(
-      { const_name: "CATEGORY_ID", namespace: nil },
-      { const_name: "Versioning", namespace: nil },
+  it "finds module name" do
+    constant = described_class.constants_in_code(code: "module Product; end").first
+
+    expect(constant.inspect).to eq("Object { Product } → main:1")
+  end
+
+  it "finds constant name" do
+    constant = described_class.constants_in_code(code: "CATEGORY_ID").first
+
+    expect(constant.inspect).to eq("Object { CATEGORY_ID } → main:1")
+  end
+
+  it "finds constant in global context" do
+    constants =
+      described_class.constants_in_code(code: <<~RUBY)
+        module Catalog
+          class Product
+            include ::Versioning
+
+            def category_id = ::CATEGORY_ID
+          end
+        end
+      RUBY
+
+    expect(constants.map(&:inspect)).to include(
+      "Object { Versioning } → main:3",
+      "Object { CATEGORY_ID } → main:5",
     )
   end
 end

@@ -24,6 +24,7 @@ PATH
   specs:
     const_stricter (1.0.0)
       activesupport
+      colorize
       prism
 
 GEM
@@ -129,7 +130,6 @@ GEM
     uri (1.0.3)
 
 PLATFORMS
-  ruby
   x86_64-linux
 
 DEPENDENCIES
