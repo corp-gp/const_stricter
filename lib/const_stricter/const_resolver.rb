@@ -5,11 +5,11 @@ module ConstStricter
     include Singleton
 
     def initialize
-      @evaluated = {}
+      @cache = {}
     end
 
     def self.missed?(namespace:, const_name:)
-      !evaluate(namespace:, const_name:).nil?
+      evaluate(namespace:, const_name:) != nil
     end
 
     def self.evaluate(namespace:, const_name:)
@@ -17,38 +17,52 @@ module ConstStricter
     end
 
     def evaluate(namespace:, const_name:)
-      resolved_paths = []
+      lookup = ConstLookup.new
+      lookup.cache = @cache
 
       evaluated_constant =
-        const_lookup_in_context(namespace, const_name, resolved_paths, inherit: false) ||
-        const_lookup_in_context(namespace, const_name, resolved_paths, inherit: true)
+        lookup.find_constant(namespace:, const_name:, inherit: false) ||
+        lookup.find_constant(namespace:, const_name:, inherit: true)
 
-      resolved_paths.each do |parsed_const_hsh|
-        @evaluated[parsed_const_hsh] = evaluated_constant
+      lookup.resolved_paths.each do |const_hsh|
+        @cache[const_hsh] = evaluated_constant
       end
 
       evaluated_constant
     end
 
-    private def const_lookup_in_context(current_namespace, const_name, resolved_paths, inherit:)
-      cache_key = { namespace: current_namespace, const_name: }
-      return @evaluated[cache_key] if @evaluated.key?(cache_key)
+    class ConstLookup
+      attr_accessor :cache, :resolved_paths
 
-      resolved_paths << cache_key
-
-      if current_namespace
-        Object.const_get(current_namespace).const_get(const_name, inherit)
-      else
-        Object.const_get(const_name, inherit)
-      end
-    rescue NameError => e
-      missed_const_name = e.message[/uninitialized constant (.+)$/, 1]
-      if missed_const_name != const_name && !const_name.start_with?(missed_const_name) && !missed_const_name.delete_prefix(current_namespace) == const_name
-        raise
+      def initialize
+        @resolved_paths = []
       end
 
-      if current_namespace
-        const_lookup_in_context(current_namespace.split("::")[0..-2].join("::").presence, const_name, resolved_paths, inherit:)
+      def find_constant(namespace:, const_name:, inherit: false)
+        cache_key = { namespace:, const_name: }
+        return @cache[cache_key] if @cache.key?(cache_key)
+
+        resolved_paths << cache_key
+
+        if namespace
+          Object.const_get(namespace).const_get(const_name, inherit)
+        else
+          Object.const_get(const_name, inherit)
+        end
+      rescue NameError => e
+        missed_const_name = e.message[/uninitialized constant (.+)$/, 1]
+        if missed_const_name != const_name && !const_name.start_with?(missed_const_name) && !missed_const_name.delete_prefix(namespace) == const_name
+          # срабатывание может быть вызвано не тем, что не существует искомая константа,
+          # а тем, что есть несвязанная ошибка в коде вызываемого класса/модуля
+          raise
+        end
+
+        if namespace
+          const_path = ConstName.new(ConstName.split(namespace))
+          const_path.pop
+
+          find_constant(namespace: const_path.full_name, const_name:, inherit:)
+        end
       end
     end
   end

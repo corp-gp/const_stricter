@@ -3,8 +3,8 @@ module ConstStricter
     attr_reader :dynamic, :name_parts
     private :name_parts
 
-    def initialize
-      @name_parts = []
+    def initialize(name_parts = [])
+      @name_parts = name_parts
       @dynamic = false
     end
 
@@ -16,15 +16,24 @@ module ConstStricter
 
     def parent = name_parts[0]
 
-    def add_parent(name_part)
+    def unshift(name_part)
       @dynamic ||= name_part.dynamic
       name_parts.unshift name_part
     end
 
+    def pop = name_parts.pop
+
     MODULE_DELIMITER = "::"
+    private_constant :MODULE_DELIMITER
 
-    def full_name = any? ? name_parts.join(MODULE_DELIMITER) : nil
+    def self.split(string)
+      string.split(MODULE_DELIMITER)
+    end
 
-    def any? = !name_parts.empty?
+    def full_name
+      name_parts.join(MODULE_DELIMITER) unless empty?
+    end
+
+    def empty? = name_parts.empty?
   end
 end
