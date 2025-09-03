@@ -5,8 +5,10 @@ namespace :const_stricter do
   task :lint, [:glob] => :environment do |_t, args|
     glob = args[:glob] || "{app,lib}/**/*.rb"
 
+    file_paths = Dir.glob(glob)
+
     constants =
-      Dir.glob(glob).flat_map do |file_path|
+      file_paths.flat_map do |file_path|
         ConstStricter.constants_in_file(file_path:)
       end
 
@@ -22,18 +24,24 @@ namespace :const_stricter do
     end
 
     unless dynamic_constants.empty?
-      puts ColorizedString["Dynamic constants"].colorize(:light_blue)
+      puts ColorizedString["Dynamic constants"].light_blue
       dynamic_constants.each_key.with_index do |parsed_const, idx|
         pretty_print(parsed_const, locations: dynamic_constants[parsed_const], number: idx + 1)
       end
     end
 
     unless missed_constants.empty?
-      puts ColorizedString["Missed constants"].colorize(:yellow)
+      puts ColorizedString["Missed constants"].yellow
       missed_constants.each_key.with_index do |parsed_const, idx|
         pretty_print(parsed_const, locations: missed_constants[parsed_const], number: idx + 1)
       end
     end
+
+    if dynamic_constants.empty? && missed_constants.empty?
+      puts "No problems found"
+    end
+
+    puts ColorizedString["#{file_paths.size} files scanned"].green
   end
 end
 
@@ -41,7 +49,7 @@ LOCATION_SEPARATOR = "\n  ↳ "
 
 def pretty_print(parsed_const, locations:, number:)
   puts <<~TEXT
-    #{number}. #{ColorizedString[parsed_const.const_name].colorize(:light_magenta)} in #{parsed_const.namespace}
+    #{number}. #{ColorizedString[parsed_const.const_name].light_magenta} in #{parsed_const.namespace}
       ↳ #{locations.join(LOCATION_SEPARATOR)}
   TEXT
 end
