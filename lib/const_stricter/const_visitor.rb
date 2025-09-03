@@ -1,5 +1,3 @@
-require "active_support/core_ext/module/redefine_method"
-
 require "const_stricter/const_name"
 require "const_stricter/const_name_part"
 require "const_stricter/const_map"
@@ -9,7 +7,7 @@ module ConstStricter
     attr_reader :const_map
 
     instance_methods.grep(/visit_/).each do |method_name|
-      redefine_method(method_name) { |node| visit_child_nodes(node) }
+      define_method(method_name) { |node| visit_child_nodes(node) }
     end
 
     def initialize

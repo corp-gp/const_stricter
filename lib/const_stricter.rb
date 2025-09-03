@@ -1,6 +1,4 @@
 require "prism"
-require "active_support/core_ext/array/wrap"
-require "active_support/core_ext/object/blank"
 
 require "const_stricter/version"
 require "const_stricter/railtie" if defined?(Rails::Railtie)
