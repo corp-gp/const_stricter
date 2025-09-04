@@ -8,7 +8,7 @@ module ConstStricter
       @cache = {}
     end
 
-    def self.missed?(namespace:, const_name:)
+    def self.missing?(namespace:, const_name:)
       evaluate(namespace:, const_name:) != nil
     end
 
@@ -44,14 +44,17 @@ module ConstStricter
 
         resolved_paths << cache_key
 
-        if namespace
-          Object.const_get(namespace).const_get(const_name, inherit)
-        else
-          Object.const_get(const_name, inherit)
-        end
+        (namespace ? Object.const_get(namespace) : Object).const_get(const_name, inherit)
       rescue NameError => e
-        missed_const_name = e.message[/uninitialized constant (.+)$/, 1]
-        if missed_const_name != const_name && !const_name.start_with?(missed_const_name) && !missed_const_name.delete_prefix(namespace) == const_name
+        missing_name =
+          if e.respond_to?(:missing_name)
+            # activesupport/lib/active_support/core_ext/name_error.rb
+            e.missing_name
+          else
+            e.message[/uninitialized constant (.+)$/, 1]
+          end
+
+        if missing_name != const_name && !const_name.start_with?(missing_name) && !missing_name.delete_prefix(namespace) == const_name
           # срабатывание может быть вызвано не тем, что не существует искомая константа,
           # а тем, что есть несвязанная ошибка в коде вызываемого класса/модуля
           raise

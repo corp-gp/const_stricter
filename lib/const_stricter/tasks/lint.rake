@@ -18,7 +18,7 @@ namespace :const_stricter do
     constants.each do |parsed_const|
       if parsed_const.dynamic
         dynamic_constants[parsed_const] << parsed_const.location
-      elsif !ConstStricter.constant_missed?(namespace: parsed_const.namespace, const_name: parsed_const.const_name)
+      elsif !ConstStricter.constant_missing?(namespace: parsed_const.namespace, const_name: parsed_const.const_name)
         missed_constants[parsed_const] << parsed_const.location
       end
     end

@@ -13,5 +13,5 @@ module ConstStricter
   def constants_in_file(file_path:) = ConstParser.in_file(file_path:)
   def constants_in_code(code:)      = ConstParser.in_code(code:)
 
-  def constant_missed?(namespace:, const_name:) = ConstResolver.missed?(namespace:, const_name:)
+  def constant_missing?(namespace:, const_name:) = ConstResolver.missing?(namespace:, const_name:)
 end
