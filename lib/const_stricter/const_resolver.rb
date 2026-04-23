@@ -9,7 +9,7 @@ module ConstStricter
     end
 
     def self.missing?(namespace:, const_name:)
-      evaluate(namespace:, const_name:) != nil
+      evaluate(namespace:, const_name:).nil?
     end
 
     def self.evaluate(namespace:, const_name:)
