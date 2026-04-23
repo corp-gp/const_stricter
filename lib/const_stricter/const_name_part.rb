@@ -1,5 +1,6 @@
 module ConstStricter
-  class ConstNamePart < String
-    attr_accessor :dynamic, :line_no
-  end
+  ConstNamePart =
+    Struct.new(:value, :line_no, :dynamic) do
+      def to_s = value
+    end
 end

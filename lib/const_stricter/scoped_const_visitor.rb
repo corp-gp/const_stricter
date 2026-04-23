@@ -11,10 +11,11 @@ module ConstStricter
     end
 
     def visit_scoped_node(node)
-      const_name_visitor = ConstVisitor.new
-      node.constant_path.accept(const_name_visitor)
-
-      const_name = const_name_visitor.const_map.keys[0]
+      const_name = ConstName.new(
+        [
+          ConstNamePart.new(node.constant_path.slice, node.constant_path.location.start_line),
+        ],
+      )
 
       @const_map.push(const_path: @const_path, const_name:)
 

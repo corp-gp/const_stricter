@@ -35,26 +35,43 @@ module ConstStricter
     LINE_NO_SEPARATOR = ":"
     private_constant :LINE_NO_SEPARATOR
 
-    private def find_constants_recursive(const_map, namespaces: [])
+    private def find_constants_recursive(const_map, namespaces: [], segments: [])
+      # lookup_namespaces одинаков для всех констант на этом уровне — вычисляем один раз
+      lookup_namespaces = build_lookup_namespaces(namespaces, segments)
+      namespace_string  = segments.empty? ? nil : segments.join("::")
+
       constants = []
 
       const_map.each do |namespace, child_const_map|
         parsed_const =
           ParsedConst.new(
-            namespace:  ConstName.new(namespaces.map(&:full_name)).full_name,
+            namespace:  namespace_string,
             const_name: namespace.full_name,
           )
-        parsed_const.location = [file_path, namespace.line_no].compact.join(LINE_NO_SEPARATOR)
-        parsed_const.dynamic  = namespace.dynamic
+        parsed_const.location          = [file_path, namespace.line_no].compact.join(LINE_NO_SEPARATOR)
+        parsed_const.dynamic           = namespace.dynamic
+        parsed_const.lookup_namespaces = lookup_namespaces
 
         constants << parsed_const
 
         unless child_const_map.empty?
-          constants.concat find_constants_recursive(child_const_map, namespaces: namespaces + [namespace])
+          child_segments = segments + ConstName.split(namespace.full_name)
+          constants.concat find_constants_recursive(child_const_map, namespaces: namespaces + [namespace], segments: child_segments)
         end
       end
 
       constants
+    end
+
+    # Each module/class opening contributes one lexical nesting level regardless of
+    # how many :: segments its name has, so valid lookup namespaces are only at those
+    # boundaries (innermost first, nil = Object).
+    private def build_lookup_namespaces(namespaces, segments)
+      stops =
+        namespaces.reverse.each_with_object([segments.length]) do |ns, acc|
+          acc << (acc.last - ConstName.split(ns.full_name).length)
+        end
+      stops.map { |n| n == 0 ? nil : segments.first(n).join("::") }
     end
   end
 end

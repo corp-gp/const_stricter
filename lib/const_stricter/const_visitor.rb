@@ -6,7 +6,10 @@ module ConstStricter
   class ConstVisitor < Prism::Visitor
     attr_reader :const_map
 
-    instance_methods.grep(/visit_/).each do |method_name|
+    # Prism::Visitor по умолчанию вызывает each_child_node напрямую в каждом visit_*,
+    # минуя visit_child_nodes. Переопределяем все visit_* чтобы они шли через наш
+    # visit_child_nodes, где отслеживаются динамические константы.
+    instance_methods.grep(/\Avisit_/).each do |method_name|
       define_method(method_name) { |node| visit_child_nodes(node) }
     end
 
@@ -21,11 +24,7 @@ module ConstStricter
         # include ::ComponentViewPath не вызывает visit_constant_read_node
         visit_constant_read_node(node, force_global_scope: true)
       else
-        @current_const.unshift(
-          ConstNamePart.new(node.name.to_s).tap do |name_part|
-            name_part.line_no = node.location.start_line
-          end,
-        )
+        @current_const.unshift(ConstNamePart.new(node.name.to_s, node.location.start_line))
         visit_child_nodes(node)
       end
     end
@@ -34,11 +33,7 @@ module ConstStricter
     private_constant :EMPTY_ARRAY
 
     def visit_constant_read_node(node, force_global_scope: false)
-      @current_const.unshift(
-        ConstNamePart.new(node.name.to_s).tap do |name_part|
-          name_part.line_no = node.location.start_line
-        end,
-      )
+      @current_const.unshift(ConstNamePart.new(node.name.to_s, node.location.start_line))
       @const_map.push(const_path: force_global_scope ? EMPTY_ARRAY : @const_path, const_name: @current_const)
       @current_const = ConstName.new
     end
@@ -49,12 +44,7 @@ module ConstStricter
           # slice возвращает код ноды, включая все дочерние
           # в родительскую цепочку добавляется только самый верхний уровень
           # connection.module::Jobs::ImportProductsJob
-          @current_const.unshift(
-            ConstNamePart.new(node.slice).tap do |name_part|
-              name_part.line_no = node.location.start_line
-              name_part.dynamic = true
-            end,
-          )
+          @current_const.unshift(ConstNamePart.new(node.slice, node.location.start_line, true))
         end
         if node.compact_child_nodes.empty?
           # Values()::USER_ID
