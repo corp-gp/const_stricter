@@ -19,7 +19,7 @@ RSpec.describe ConstStricter do
 
     result = ConstStricter::ConstResolver.evaluate(namespace: "Deep::Ns::Foo", const_name: "Outer::Base")
 
-    expect(result).to eq Outer::Base
+    expect(result.value!).to eq Outer::Base
   ensure
     Object.send(:remove_const, :Deep) if Object.const_defined?(:Deep) # rubocop:disable RSpec/RemoveConst
     Object.send(:remove_const, :Outer) if Object.const_defined?(:Outer) # rubocop:disable RSpec/RemoveConst
@@ -37,7 +37,8 @@ RSpec.describe ConstStricter do
 
     result = m.instance_eval { ConstStricter::ConstResolver.evaluate(namespace: "Item", const_name: "CATEGORY_ID") }
 
-    expect(result).to eq 1
+    expect(result).to be_success
+    expect(result.value!).to eq(1)
   end
 
   it "resolves constant in parent context" do
@@ -54,7 +55,7 @@ RSpec.describe ConstStricter do
 
     result = m.instance_eval { ConstStricter::ConstResolver.evaluate(namespace: "Catalog::Item", const_name: "CATEGORY_ID") }
 
-    expect(result).to eq 2
+    expect(result).to be_success
   end
 
   it "unable to resolve constant" do
@@ -67,6 +68,6 @@ RSpec.describe ConstStricter do
 
     result = m.instance_eval { ConstStricter::ConstResolver.evaluate(namespace: "Item", const_name: "GROUP_ID") }
 
-    expect(result).to be_nil
+    expect(result).to be_failure
   end
 end

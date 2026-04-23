@@ -9,7 +9,7 @@ module ConstStricter
     end
 
     def self.missing?(namespace:, const_name:)
-      evaluate(namespace:, const_name:).equal?(nil)
+      evaluate(namespace:, const_name:).failure?
     end
 
     def self.evaluate(namespace:, const_name:)
@@ -20,15 +20,14 @@ module ConstStricter
       lookup = ConstLookup.new
       lookup.cache = @cache
 
-      evaluated_constant =
-        lookup.find_constant(namespace:, const_name:, inherit: false) ||
-        lookup.find_constant(namespace:, const_name:, inherit: true)
+      lookup_result = lookup.find_constant(namespace:, const_name:, inherit: false)
+      lookup_result = lookup.find_constant(namespace:, const_name:, inherit: true) if lookup_result.failure?
 
       lookup.resolved_paths.each do |const_hsh|
-        @cache[const_hsh] = evaluated_constant
+        @cache[const_hsh] = lookup_result
       end
 
-      evaluated_constant
+      lookup_result
     end
 
     class ConstLookup
@@ -44,7 +43,9 @@ module ConstStricter
 
         resolved_paths << cache_key
 
-        (namespace ? Object.const_get(namespace) : Object).const_get(const_name, inherit)
+        evaluated_constant = (namespace ? Object.const_get(namespace) : Object).const_get(const_name, inherit)
+
+        LookupResult.new(evaluated_constant)
       rescue NameError => e
         missing_name =
           if e.respond_to?(:missing_name)
@@ -54,7 +55,7 @@ module ConstStricter
             e.message[/uninitialized constant (.+)$/, 1]
           end
 
-        const_name_first_segment = const_name.split("::").first
+        const_name_first_segment = ConstName.split(const_name).first
 
         if missing_name != const_name &&
            !const_name.start_with?(missing_name) &&
@@ -62,15 +63,30 @@ module ConstStricter
            missing_name != "#{namespace}::#{const_name_first_segment}"
           # срабатывание может быть вызвано не искомой константой,
           # а тем, что есть несвязанная ошибка в коде вызываемого класса/модуля
-          raise
+          return LookupResult.new.tap { |r| r.errors << e.message }
         end
 
         if namespace
           const_path = ConstName.new(ConstName.split(namespace))
           const_path.pop
 
-          find_constant(namespace: const_path.full_name, const_name:, inherit:)
+          return find_constant(namespace: const_path.full_name, const_name:, inherit:)
         end
+
+        LookupResult.new.tap { |r| r.errors << "unable to resolve #{const_name}" }
+      end
+
+      class LookupResult
+        attr_reader :errors
+
+        def initialize(value = nil)
+          @value  = value
+          @errors = []
+        end
+
+        def value!   = @value
+        def success? = errors.empty?
+        def failure? = !success?
       end
     end
   end
