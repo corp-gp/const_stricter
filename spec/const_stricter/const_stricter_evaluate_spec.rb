@@ -3,6 +3,28 @@ RSpec.describe ConstStricter do
     ConstStricter::ConstResolver.instance.instance_variable_set(:@evaluated, {})
   end
 
+  # Regression: compound inherited constant (e.g. `class Foo < Outer::Base`) inside a deep
+  # namespace used to raise instead of bubbling up the scope chain, because missing_name
+  # was "Deep::Ns::Outer" which didn't match any of the original guard conditions.
+  it "resolves compound inherited constant in deep namespace" do
+    module Outer
+      class Base; end
+    end
+
+    module Deep
+      module Ns
+        class Foo < Outer::Base; end
+      end
+    end
+
+    result = ConstStricter::ConstResolver.evaluate(namespace: "Deep::Ns::Foo", const_name: "Outer::Base")
+
+    expect(result).to eq Outer::Base
+  ensure
+    Object.send(:remove_const, :Deep) if Object.const_defined?(:Deep) # rubocop:disable RSpec/RemoveConst
+    Object.send(:remove_const, :Outer) if Object.const_defined?(:Outer) # rubocop:disable RSpec/RemoveConst
+  end
+
   it "resolves constant by name" do
     m =
       Module.new do

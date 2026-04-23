@@ -9,7 +9,7 @@ module ConstStricter
     end
 
     def self.missing?(namespace:, const_name:)
-      evaluate(namespace:, const_name:).nil?
+      evaluate(namespace:, const_name:).equal?(nil)
     end
 
     def self.evaluate(namespace:, const_name:)
@@ -54,9 +54,12 @@ module ConstStricter
             e.message[/uninitialized constant (.+)$/, 1]
           end
 
+        const_name_first_segment = const_name.split("::").first
+
         if missing_name != const_name &&
            !const_name.start_with?(missing_name) &&
-           missing_name.delete_prefix("#{namespace}::") != const_name
+           missing_name.delete_prefix("#{namespace}::") != const_name &&
+           missing_name != "#{namespace}::#{const_name_first_segment}"
           # срабатывание может быть вызвано не искомой константой,
           # а тем, что есть несвязанная ошибка в коде вызываемого класса/модуля
           raise
