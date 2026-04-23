@@ -29,3 +29,7 @@ Gp/SpecConstantAssignment:
 RSpec/DescribedClass:
   Exclude:
     - spec/const_stricter/const_stricter_evaluate_spec.rb
+
+Lint/EmptyClass:
+  Exclude:
+    - spec/const_stricter/const_stricter_evaluate_spec.rb

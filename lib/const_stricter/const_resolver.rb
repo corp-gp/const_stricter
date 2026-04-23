@@ -45,7 +45,7 @@ module ConstStricter
 
         evaluated_constant = (namespace ? Object.const_get(namespace) : Object).const_get(const_name, inherit)
 
-        LookupResult.new(evaluated_constant)
+        LookupResult.new(value: evaluated_constant)
       rescue NameError => e
         missing_name =
           if e.respond_to?(:missing_name)
@@ -79,7 +79,7 @@ module ConstStricter
       class LookupResult
         attr_reader :errors
 
-        def initialize(value = nil)
+        def initialize(value: nil)
           @value  = value
           @errors = []
         end
