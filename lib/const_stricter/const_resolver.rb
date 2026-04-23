@@ -54,8 +54,10 @@ module ConstStricter
             e.message[/uninitialized constant (.+)$/, 1]
           end
 
-        if missing_name != const_name && !const_name.start_with?(missing_name) && !missing_name.delete_prefix(namespace) == const_name
-          # срабатывание может быть вызвано не тем, что не существует искомая константа,
+        if missing_name != const_name &&
+           !const_name.start_with?(missing_name) &&
+           missing_name.delete_prefix("#{namespace}::") != const_name
+          # срабатывание может быть вызвано не искомой константой,
           # а тем, что есть несвязанная ошибка в коде вызываемого класса/модуля
           raise
         end
