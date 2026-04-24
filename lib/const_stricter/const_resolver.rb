@@ -17,7 +17,7 @@ module ConstStricter
     end
 
     def evaluate(parsed_const)
-      resolved_paths = []
+      resolved_paths = Set.new
 
       result =
         find_in(parsed_const.lookup_namespaces, parsed_const.const_name, inherit: false) { |hsh| resolved_paths << hsh } ||
@@ -30,16 +30,14 @@ module ConstStricter
     end
 
     private def find_in(lookup_namespaces, const_name, inherit:)
-      lookup_namespaces.each do |namespace|
+      lookup_namespaces.detect do |namespace|
+        break @cache[{ namespace:, const_name: }] if @cache.key?({ namespace:, const_name: })
+
         yield ({ namespace:, const_name: })
 
-        return @cache[{ namespace:, const_name: }] if @cache.key?({ namespace:, const_name: })
-
-        result = try_constant(namespace, const_name, inherit:)
-        return result if result.success? || result.unrelated_error?
+        lookup_result = try_constant(namespace, const_name, inherit:)
+        break lookup_result if lookup_result
       end
-
-      nil
     end
 
     private def try_constant(namespace, const_name, inherit:)
@@ -62,10 +60,10 @@ module ConstStricter
          missing_name != "#{namespace}::#{const_name_first_segment}"
         # срабатывание может быть вызвано не искомой константой,
         # а тем, что есть несвязанная ошибка в коде вызываемого класса/модуля
-        return LookupResult.failure(e.message, unrelated: true)
+        LookupResult.failure(e.message)
       end
 
-      LookupResult.failure("unable to resolve #{const_name}")
+      nil
     end
 
     class LookupResult
@@ -75,20 +73,18 @@ module ConstStricter
         new(value:)
       end
 
-      def self.failure(message, unrelated: false)
-        new(error: message, unrelated_error: unrelated)
+      def self.failure(message)
+        new(error: message)
       end
 
-      def initialize(value: nil, error: nil, unrelated_error: false)
-        @value           = value
-        @errors          = error ? [error] : []
-        @unrelated_error = unrelated_error
+      def initialize(value: nil, error: nil)
+        @value  = value
+        @errors = error ? [error] : []
       end
 
-      def value!           = @value
-      def success?         = errors.empty?
-      def failure?         = !success?
-      def unrelated_error? = @unrelated_error
+      def value!   = @value
+      def success? = errors.empty?
+      def failure? = !success?
     end
   end
 end
