@@ -35,17 +35,16 @@ module ConstStricter
     LINE_NO_SEPARATOR = ":"
     private_constant :LINE_NO_SEPARATOR
 
-    private def find_constants_recursive(const_map, namespaces: [], segments: [])
-      # namespaces одинаков для всех констант на этом уровне — вычисляем один раз
-      lookup_namespaces = build_lookup_namespaces(namespaces, segments)
+    private def find_constants_recursive(const_map, namespaces: [])
+      contexts = build_contexts(namespaces)
 
       constants = []
 
       const_map.each do |namespace, child_const_map|
         parsed_const =
           ParsedConst.new(
-            namespaces: lookup_namespaces,
             const_name: namespace.full_name,
+            contexts:,
           )
         parsed_const.location = [file_path, namespace.line_no].compact.join(LINE_NO_SEPARATOR)
         parsed_const.dynamic  = namespace.dynamic
@@ -53,23 +52,28 @@ module ConstStricter
         constants << parsed_const
 
         unless child_const_map.empty?
-          child_segments = segments + ConstName.split(namespace.full_name)
-          constants.concat find_constants_recursive(child_const_map, namespaces: namespaces + [namespace], segments: child_segments)
+          constants.concat find_constants_recursive(child_const_map, namespaces: namespaces + [namespace])
         end
       end
 
       constants
     end
 
-    # Each module/class opening contributes one lexical nesting level regardless of
-    # how many :: segments its name has, so valid lookup namespaces are only at those
-    # boundaries (innermost first, nil = Object).
-    private def build_lookup_namespaces(namespaces, segments)
-      stops =
-        namespaces.reverse.each_with_object([segments.length]) do |ns, acc|
-          acc << (acc.last - ConstName.split(ns.full_name).length)
+    private def build_contexts(namespaces)
+      current_namespace = nil
+
+      contexts =
+        namespaces.map do |ns|
+          # ["SupplierSync::WebHooks::Jobs", "ReserveJob"] ->
+          #   ["SupplierSync::WebHooks::Jobs", "SupplierSync::WebHooks::Jobs::ReserveJob"]
+          context = ConstName.expand(ns, namespace: current_namespace)
+          current_namespace = context
+          context
         end
-      stops.map { |n| n == 0 ? "Object" : segments.first(n).join("::") }
+
+      contexts.reverse!
+      contexts << ConstName::OBJECT
+      contexts
     end
   end
 end

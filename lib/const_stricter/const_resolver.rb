@@ -8,20 +8,20 @@ module ConstStricter
       @cache = {}
     end
 
-    def self.missing?(const_name:, namespaces:)
-      evaluate(const_name:, namespaces:).failure?
+    def self.missing?(const_name:, contexts:)
+      evaluate(const_name:, contexts:).failure?
     end
 
-    def self.evaluate(const_name:, namespaces:)
-      instance.evaluate(const_name:, namespaces:)
+    def self.evaluate(const_name:, contexts:)
+      instance.evaluate(const_name:, contexts:)
     end
 
-    def evaluate(const_name:, namespaces:)
+    def evaluate(const_name:, contexts:)
       resolved_paths = Set.new
 
       result =
-        find_in(namespaces, const_name, inherit: false) { |hsh| resolved_paths << hsh } ||
-        find_in(namespaces, const_name, inherit: true) { |hsh| resolved_paths << hsh } ||
+        find_in(const_name, contexts:, inherit: false) { |hsh| resolved_paths << hsh } ||
+        find_in(const_name, contexts:, inherit: true) { |hsh| resolved_paths << hsh } ||
         LookupResult.failure("unable to resolve #{const_name}")
 
       resolved_paths.each { |key| @cache[key] = result }
@@ -29,8 +29,8 @@ module ConstStricter
       result
     end
 
-    private def find_in(namespaces, const_name, inherit:)
-      namespaces.detect do |namespace|
+    private def find_in(const_name, contexts:, inherit:)
+      contexts.detect do |namespace|
         break @cache[{ namespace:, const_name: }] if @cache.key?({ namespace:, const_name: })
 
         yield ({ namespace:, const_name: })

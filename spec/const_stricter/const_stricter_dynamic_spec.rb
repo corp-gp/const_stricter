@@ -11,7 +11,7 @@ RSpec.describe ConstStricter do
         end
       RUBY
 
-    expect(constants.map(&:inspect)).to include(
+    expect(constants.map(&:to_s)).to include(
       "Product { user_rate_module::PRICE_COEF } → main:2",
       "Product { const_get(user_rate_module_name)::PRICE_COEF } → main:3",
       "Product { RateModule()::PRICE_COEF } → main:4",
@@ -26,6 +26,6 @@ RSpec.describe ConstStricter do
         end
       RUBY
 
-    expect(constants.map(&:inspect)).to eq(["Object { Product } → main:1"])
+    expect(constants.map(&:to_s)).to eq(["Object { Product } → main:1"])
   end
 end

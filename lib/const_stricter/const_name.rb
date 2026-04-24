@@ -1,5 +1,7 @@
 module ConstStricter
   class ConstName
+    OBJECT = "Object"
+
     attr_reader :dynamic, :name_parts
     private :name_parts
 
@@ -8,7 +10,8 @@ module ConstStricter
       @dynamic = false
     end
 
-    def inspect = "#{full_name} :#{line_no}"
+    def inspect = "#<#{self.class.name} #{self}>"
+    def to_s    = "#{full_name} :#{line_no}"
 
     def line_no
       @line_no ||= name_parts[0].line_no
@@ -28,6 +31,10 @@ module ConstStricter
 
     def self.split(string)
       string.split(MODULE_DELIMITER)
+    end
+
+    def self.expand(const_name, namespace:)
+      [namespace, const_name.full_name].compact.join(MODULE_DELIMITER)
     end
 
     def full_name

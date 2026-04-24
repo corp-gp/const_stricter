@@ -20,7 +20,7 @@ RSpec.describe ConstStricter do
     result =
       ConstStricter::ConstResolver.evaluate(
         const_name: "Outer::Base",
-        namespaces: %w[Deep::Ns::Foo Object],
+        contexts:   %w[Deep::Ns::Foo Object],
       )
 
     expect(result.value!).to eq Outer::Base
@@ -43,7 +43,7 @@ RSpec.describe ConstStricter do
       m.instance_eval do
         ConstStricter::ConstResolver.evaluate(
           const_name: "CATEGORY_ID",
-          namespaces: %w[Item Object],
+          contexts:   %w[Item Object],
         )
       end
 
@@ -67,7 +67,7 @@ RSpec.describe ConstStricter do
       m.instance_eval do
         ConstStricter::ConstResolver.evaluate(
           const_name: "CATEGORY_ID",
-          namespaces: %w[Catalog::Item Catalog Object],
+          contexts:   %w[Catalog::Item Catalog Object],
         )
       end
 
@@ -92,7 +92,7 @@ RSpec.describe ConstStricter do
     result =
       ConstStricter::ConstResolver.evaluate(
         const_name: "Mtforce::Reserve",
-        namespaces: %w[SupplierSync::WebHooks::Jobs::ReserveJob SupplierSync::WebHooks::Jobs Object],
+        contexts:   %w[SupplierSync::WebHooks::Jobs::ReserveJob SupplierSync::WebHooks::Jobs Object],
       )
 
     expect(result).to be_failure
@@ -111,7 +111,7 @@ RSpec.describe ConstStricter do
     result =
       ConstStricter::ConstResolver.evaluate(
         const_name: "Foo",
-        namespaces: %w[Abc::Def::Bar Abc::Def Abc Object],
+        contexts:   %w[Abc::Def::Bar Abc::Def Abc Object],
       )
 
     expect(result).to be_success
@@ -134,7 +134,7 @@ RSpec.describe ConstStricter do
     result =
       ConstStricter::ConstResolver.evaluate(
         const_name: "Foo2",
-        namespaces: %w[Outer2::Inner2::Deep2::Work2 Outer2::Inner2::Deep2 Object],
+        contexts:   %w[Outer2::Inner2::Deep2::Work2 Outer2::Inner2::Deep2 Object],
       )
 
     expect(result).to be_failure
@@ -154,7 +154,7 @@ RSpec.describe ConstStricter do
       m.instance_eval do
         ConstStricter::ConstResolver.evaluate(
           const_name: "GROUP_ID",
-          namespaces: %w[Item Object],
+          contexts:   %w[Item Object],
         )
       end
 
