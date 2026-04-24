@@ -35,7 +35,7 @@ RSpec.describe ConstStricter do
     expect(constant.inspect).to eq("Object { CATEGORY_ID } → main:1")
   end
 
-  it "sets lookup_namespaces reflecting compact module notation" do
+  it "sets namespaces reflecting compact module notation" do
     constants =
       described_class.constants_in_code(code: <<~RUBY)
         module SupplierSync::WebHooks::Jobs
@@ -49,10 +49,10 @@ RSpec.describe ConstStricter do
 
     mtforce_ref = constants.find { |c| c.const_name == "Mtforce::Reserve" }
     expect(mtforce_ref).not_to be_nil
-    expect(mtforce_ref.lookup_namespaces).to eq(["SupplierSync::WebHooks::Jobs::ReserveJob", "SupplierSync::WebHooks::Jobs", nil])
+    expect(mtforce_ref.namespaces).to eq(%w[SupplierSync::WebHooks::Jobs::ReserveJob SupplierSync::WebHooks::Jobs Object])
   end
 
-  it "sets lookup_namespaces reflecting individually opened modules" do
+  it "sets namespaces reflecting individually opened modules" do
     constants =
       described_class.constants_in_code(code: <<~RUBY)
         module A
@@ -66,7 +66,7 @@ RSpec.describe ConstStricter do
 
     foo_ref = constants.find { |c| c.const_name == "Foo::Bar" }
     expect(foo_ref).not_to be_nil
-    expect(foo_ref.lookup_namespaces).to eq(["A::B::C", "A::B", "A", nil])
+    expect(foo_ref.namespaces).to eq(%w[A::B::C A::B A Object])
   end
 
   it "finds constant in global context" do

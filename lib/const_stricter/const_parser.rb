@@ -36,21 +36,19 @@ module ConstStricter
     private_constant :LINE_NO_SEPARATOR
 
     private def find_constants_recursive(const_map, namespaces: [], segments: [])
-      # lookup_namespaces одинаков для всех констант на этом уровне — вычисляем один раз
+      # namespaces одинаков для всех констант на этом уровне — вычисляем один раз
       lookup_namespaces = build_lookup_namespaces(namespaces, segments)
-      namespace_string  = segments.empty? ? nil : segments.join("::")
 
       constants = []
 
       const_map.each do |namespace, child_const_map|
         parsed_const =
           ParsedConst.new(
-            namespace:  namespace_string,
+            namespaces: lookup_namespaces,
             const_name: namespace.full_name,
           )
-        parsed_const.location          = [file_path, namespace.line_no].compact.join(LINE_NO_SEPARATOR)
-        parsed_const.dynamic           = namespace.dynamic
-        parsed_const.lookup_namespaces = lookup_namespaces
+        parsed_const.location = [file_path, namespace.line_no].compact.join(LINE_NO_SEPARATOR)
+        parsed_const.dynamic  = namespace.dynamic
 
         constants << parsed_const
 
@@ -71,7 +69,7 @@ module ConstStricter
         namespaces.reverse.each_with_object([segments.length]) do |ns, acc|
           acc << (acc.last - ConstName.split(ns.full_name).length)
         end
-      stops.map { |n| n == 0 ? nil : segments.first(n).join("::") }
+      stops.map { |n| n == 0 ? "Object" : segments.first(n).join("::") }
     end
   end
 end

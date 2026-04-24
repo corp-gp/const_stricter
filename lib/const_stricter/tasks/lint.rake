@@ -18,7 +18,7 @@ namespace :const_stricter do
     constants.each do |parsed_const|
       if parsed_const.dynamic
         dynamic_constants[parsed_const] << parsed_const.location
-      elsif ConstStricter.constant_missing?(namespace: parsed_const.namespace, const_name: parsed_const.const_name)
+      elsif ConstStricter.constant_missing?(namespaces: parsed_const.namespaces, const_name: parsed_const.const_name)
         missed_constants[parsed_const] << parsed_const.location
       end
     end
@@ -49,7 +49,7 @@ LOCATION_SEPARATOR = "\n  ↳ "
 
 def pretty_print(parsed_const, locations:, number:)
   puts <<~TEXT
-    #{number}. #{ColorizedString[parsed_const.const_name].light_magenta} in #{parsed_const.namespace}
+    #{number}. #{ColorizedString[parsed_const.const_name].light_magenta} in #{parsed_const.context}
       ↳ #{locations.join(LOCATION_SEPARATOR)}
   TEXT
 end

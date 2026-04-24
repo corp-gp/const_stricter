@@ -3,12 +3,6 @@ RSpec.describe ConstStricter do
     ConstStricter::ConstResolver.instance.instance_variable_set(:@cache, {})
   end
 
-  def parsed_const(namespace:, const_name:, lookup_namespaces: nil)
-    ConstStricter::ParsedConst.new(namespace:, const_name:).tap do |pc|
-      pc.lookup_namespaces = lookup_namespaces if lookup_namespaces
-    end
-  end
-
   # Regression: compound inherited constant (e.g. `class Foo < Outer::Base`) inside a deep
   # namespace used to raise instead of bubbling up the scope chain, because missing_name
   # was "Deep::Ns::Outer" which didn't match any of the original guard conditions.
@@ -23,7 +17,11 @@ RSpec.describe ConstStricter do
       end
     end
 
-    result = ConstStricter::ConstResolver.evaluate(parsed_const(namespace: "Deep::Ns::Foo", const_name: "Outer::Base"))
+    result =
+      ConstStricter::ConstResolver.evaluate(
+        const_name: "Outer::Base",
+        namespaces: %w[Deep::Ns::Foo Object],
+      )
 
     expect(result.value!).to eq Outer::Base
   ensure
@@ -41,8 +39,13 @@ RSpec.describe ConstStricter do
         end
       end
 
-    pc = parsed_const(namespace: "Item", const_name: "CATEGORY_ID")
-    result = m.instance_eval { ConstStricter::ConstResolver.evaluate(pc) }
+    result =
+      m.instance_eval do
+        ConstStricter::ConstResolver.evaluate(
+          const_name: "CATEGORY_ID",
+          namespaces: %w[Item Object],
+        )
+      end
 
     expect(result).to be_success
     expect(result.value!).to eq(1)
@@ -60,8 +63,13 @@ RSpec.describe ConstStricter do
         end
       end
 
-    pc = parsed_const(namespace: "Catalog::Item", const_name: "CATEGORY_ID")
-    result = m.instance_eval { ConstStricter::ConstResolver.evaluate(pc) }
+    result =
+      m.instance_eval do
+        ConstStricter::ConstResolver.evaluate(
+          const_name: "CATEGORY_ID",
+          namespaces: %w[Catalog::Item Catalog Object],
+        )
+      end
 
     expect(result).to be_success
   end
@@ -81,13 +89,11 @@ RSpec.describe ConstStricter do
       end
     end
 
-    result = ConstStricter::ConstResolver.evaluate(
-      parsed_const(
-        namespace:         "SupplierSync::WebHooks::Jobs::ReserveJob",
-        const_name:        "Mtforce::Reserve",
-        lookup_namespaces: ["SupplierSync::WebHooks::Jobs::ReserveJob", "SupplierSync::WebHooks::Jobs", nil],
-      ),
-    )
+    result =
+      ConstStricter::ConstResolver.evaluate(
+        const_name: "Mtforce::Reserve",
+        namespaces: %w[SupplierSync::WebHooks::Jobs::ReserveJob SupplierSync::WebHooks::Jobs Object],
+      )
 
     expect(result).to be_failure
   ensure
@@ -102,13 +108,11 @@ RSpec.describe ConstStricter do
       end
     end
 
-    result = ConstStricter::ConstResolver.evaluate(
-      parsed_const(
-        namespace:         "Abc::Def::Bar",
-        const_name:        "Foo",
-        lookup_namespaces: ["Abc::Def::Bar", "Abc::Def", "Abc", nil],
-      ),
-    )
+    result =
+      ConstStricter::ConstResolver.evaluate(
+        const_name: "Foo",
+        namespaces: %w[Abc::Def::Bar Abc::Def Abc Object],
+      )
 
     expect(result).to be_success
   ensure
@@ -127,13 +131,11 @@ RSpec.describe ConstStricter do
 
     # Simulates `module Outer2::Inner2::Deep2; class Work2` opened at the top level
     # (without first opening Outer2 individually). Outer2::Foo2 is not visible.
-    result = ConstStricter::ConstResolver.evaluate(
-      parsed_const(
-        namespace:         "Outer2::Inner2::Deep2::Work2",
-        const_name:        "Foo2",
-        lookup_namespaces: ["Outer2::Inner2::Deep2::Work2", "Outer2::Inner2::Deep2", nil],
-      ),
-    )
+    result =
+      ConstStricter::ConstResolver.evaluate(
+        const_name: "Foo2",
+        namespaces: %w[Outer2::Inner2::Deep2::Work2 Outer2::Inner2::Deep2 Object],
+      )
 
     expect(result).to be_failure
   ensure
@@ -148,8 +150,13 @@ RSpec.describe ConstStricter do
         end
       end
 
-    pc = parsed_const(namespace: "Item", const_name: "GROUP_ID")
-    result = m.instance_eval { ConstStricter::ConstResolver.evaluate(pc) }
+    result =
+      m.instance_eval do
+        ConstStricter::ConstResolver.evaluate(
+          const_name: "GROUP_ID",
+          namespaces: %w[Item Object],
+        )
+      end
 
     expect(result).to be_failure
   end

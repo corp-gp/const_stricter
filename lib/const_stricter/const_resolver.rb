@@ -8,29 +8,29 @@ module ConstStricter
       @cache = {}
     end
 
-    def self.missing?(parsed_const)
-      evaluate(parsed_const).failure?
+    def self.missing?(const_name:, namespaces:)
+      evaluate(const_name:, namespaces:).failure?
     end
 
-    def self.evaluate(parsed_const)
-      instance.evaluate(parsed_const)
+    def self.evaluate(const_name:, namespaces:)
+      instance.evaluate(const_name:, namespaces:)
     end
 
-    def evaluate(parsed_const)
+    def evaluate(const_name:, namespaces:)
       resolved_paths = Set.new
 
       result =
-        find_in(parsed_const.lookup_namespaces, parsed_const.const_name, inherit: false) { |hsh| resolved_paths << hsh } ||
-        find_in(parsed_const.lookup_namespaces, parsed_const.const_name, inherit: true) { |hsh| resolved_paths << hsh } ||
-        LookupResult.failure("unable to resolve #{parsed_const.const_name}")
+        find_in(namespaces, const_name, inherit: false) { |hsh| resolved_paths << hsh } ||
+        find_in(namespaces, const_name, inherit: true) { |hsh| resolved_paths << hsh } ||
+        LookupResult.failure("unable to resolve #{const_name}")
 
       resolved_paths.each { |key| @cache[key] = result }
 
       result
     end
 
-    private def find_in(lookup_namespaces, const_name, inherit:)
-      lookup_namespaces.detect do |namespace|
+    private def find_in(namespaces, const_name, inherit:)
+      namespaces.detect do |namespace|
         break @cache[{ namespace:, const_name: }] if @cache.key?({ namespace:, const_name: })
 
         yield ({ namespace:, const_name: })
