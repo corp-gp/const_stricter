@@ -6,7 +6,7 @@ RSpec.describe ConstStricter do
 
   def isolated(&)
     @isolated = true
-    yield
+    fork(&)
   end
 
   # Regression: compound inherited constant (e.g. `class Foo < Outer::Base`) inside a deep
