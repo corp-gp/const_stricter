@@ -33,3 +33,7 @@ RSpec/DescribedClass:
 Lint/EmptyClass:
   Exclude:
     - spec/const_stricter/const_stricter_evaluate_spec.rb
+
+RSpec/InstanceVariable:
+  Exclude:
+    - spec/const_stricter/const_stricter_evaluate_spec.rb
