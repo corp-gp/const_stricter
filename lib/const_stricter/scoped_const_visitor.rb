@@ -13,7 +13,7 @@ module ConstStricter
     def visit_scoped_node(node)
       const_name = ConstName.new(
         [
-          ConstNamePart.new(node.constant_path.slice, node.constant_path.location.start_line),
+          ConstNamePart.wrap(node.constant_path.slice, line_no: node.constant_path.location.start_line),
         ],
       )
 
