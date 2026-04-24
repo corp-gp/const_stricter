@@ -17,21 +17,22 @@ module ConstStricter
     end
 
     def evaluate(parsed_const)
-      tried = []
+      resolved_paths = []
 
       result =
-        find_in(parsed_const.lookup_namespaces, parsed_const.const_name, inherit: false, tried:) ||
-        find_in(parsed_const.lookup_namespaces, parsed_const.const_name, inherit: true,  tried:) ||
+        find_in(parsed_const.lookup_namespaces, parsed_const.const_name, inherit: false) { |hsh| resolved_paths << hsh } ||
+        find_in(parsed_const.lookup_namespaces, parsed_const.const_name, inherit: true) { |hsh| resolved_paths << hsh } ||
         LookupResult.failure("unable to resolve #{parsed_const.const_name}")
 
-      tried.each { |key| @cache[key] = result }
+      resolved_paths.each { |key| @cache[key] = result }
 
       result
     end
 
-    private def find_in(lookup_namespaces, const_name, inherit:, tried:)
+    private def find_in(lookup_namespaces, const_name, inherit:)
       lookup_namespaces.each do |namespace|
-        tried << { namespace:, const_name: }
+        yield ({ namespace:, const_name: })
+
         return @cache[{ namespace:, const_name: }] if @cache.key?({ namespace:, const_name: })
 
         result = try_constant(namespace, const_name, inherit:)
@@ -43,7 +44,7 @@ module ConstStricter
 
     private def try_constant(namespace, const_name, inherit:)
       value = (namespace ? Object.const_get(namespace) : Object).const_get(const_name, inherit)
-      LookupResult.new(value:)
+      LookupResult.success(value)
     rescue NameError => e
       missing_name =
         if e.respond_to?(:missing_name)
@@ -69,6 +70,10 @@ module ConstStricter
 
     class LookupResult
       attr_reader :errors
+
+      def self.success(value)
+        new(value:)
+      end
 
       def self.failure(message, unrelated: false)
         new(error: message, unrelated_error: unrelated)
